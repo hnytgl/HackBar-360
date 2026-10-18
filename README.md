@@ -4,7 +4,7 @@
 
 ## 下载与安装
 
-下载 [main 分支源码 ZIP](https://github.com/hnytgl/HackBar-360/archive/refs/heads/main.zip) 并解压；选择直接包含 `manifest.json` 的仓库根目录加载。
+前往 [v2.5.1 正式发布页](https://github.com/hnytgl/HackBar-360/releases/tag/v2.5.1) 下载 **[HackBar-360-v2.5.1.zip](https://github.com/hnytgl/HackBar-360/releases/download/v2.5.1/HackBar-360-v2.5.1.zip)** 并解压；可用发布页的 `SHA256SUMS.txt` 校验完整性。
 
 在 360 扩展管理页面开启开发者模式，加载解压后**直接包含 `manifest.json` 的文件夹**。本安装 ZIP 的清单位于根目录，没有额外嵌套。目标页面使用极速模式，按 **F12 → HackBar**；也可通过扩展图标打开独立调试窗口。
 

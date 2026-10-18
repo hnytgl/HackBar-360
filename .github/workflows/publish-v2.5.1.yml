@@ -1,0 +1,48 @@
+name: Publish HackBar-360 v2.5.1
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-v2.5.1.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Package and publish v2.5.1
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate manifest and JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e "const m = require('./manifest.json'); if (m.version !== '2.5.1' || m.manifest_version !== 2) process.exit(1)"
+          node --check background.js
+          find theme popup -type f -name '*.js' -print0 | xargs -0 -r -n1 node --check
+
+      - name: Build direct-install ZIP and SHA256
+        shell: bash
+        run: |
+          set -euo pipefail
+          zip -q -r HackBar-360-v2.5.1.zip manifest.json background.js icons help popup theme README.md README-360.md NOTICE.md VALIDATION.md CHANGELOG.md
+          unzip -p HackBar-360-v2.5.1.zip manifest.json | grep -q '"version": "2.5.1"'
+          sha256sum HackBar-360-v2.5.1.zip > SHA256SUMS.txt
+
+      - name: Create or update GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if gh release view v2.5.1 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release edit v2.5.1 --title "HackBar-360 v2.5.1 · 功能完整性修复" --notes-file RELEASE_NOTES-v2.5.1.md --repo "$GITHUB_REPOSITORY"
+            gh release upload v2.5.1 HackBar-360-v2.5.1.zip SHA256SUMS.txt --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create v2.5.1 HackBar-360-v2.5.1.zip SHA256SUMS.txt --title "HackBar-360 v2.5.1 · 功能完整性修复" --notes-file RELEASE_NOTES-v2.5.1.md --target "$GITHUB_SHA" --repo "$GITHUB_REPOSITORY"
+          fi

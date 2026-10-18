@@ -1,0 +1,13 @@
+# Local requests, browser profiles, dependencies and credentials are not source.
+node_modules/
+work/
+outputs/
+*-profile*/
+.env
+.env.*
+*.log
+*.crx
+*.pem
+*.key
+Thumbs.db
+.DS_Store

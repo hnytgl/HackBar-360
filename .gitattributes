@@ -1,0 +1,4 @@
+* text=auto eol=lf
+*.png binary
+# Keep the upstream utility byte-for-byte, including its original whitespace.
+theme/js/Encrypt.js -text -whitespace

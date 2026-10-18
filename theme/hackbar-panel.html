@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HackBar · Request Lab</title><link rel="stylesheet" href="css/panel.css"></head>
+<body>
+<nav class="menubar" aria-label="HackBar 工具菜单">
+  <button id="load" title="读取当前页面 URL；从 Network 记录选择完整请求">LOAD</button><button id="split">SPLIT</button><button id="execute" title="Ctrl+Enter">EXECUTE</button>
+  <details><summary>TEST</summary><div class="dropdown"><button data-test="json">JSON POST 示例</button><button data-test="form">表单 POST 示例</button><button data-test="headers">添加常用请求头</button><button id="capture">从 Network 选择请求</button></div></details>
+  <details><summary>SQLI</summary><div class="dropdown"><button data-tool="mysql">MySQL CHAR</button><button data-tool="mssql">MSSQL CHAR</button><button data-tool="oracle">Oracle CHR</button><button data-tool="sqlinfo">数据库基本信息表达式</button><button data-tool="utf8">CONVERT USING utf8</button><button data-tool="latin1">CONVERT USING latin1</button><button data-tool="union">UNION SELECT 列数</button><button data-tool="comments">空格 → 内联注释</button></div></details>
+  <details><summary>XSS</summary><div class="dropdown"><button data-tool="charcode">String.fromCharCode</button><button data-tool="htmlentities">HTML 数字实体</button><button data-tool="alert">插入 alert 测试文本</button><button data-tool="escapehtml">HTML 转义</button></div></details>
+  <details><summary>LFI</summary><div class="dropdown"><button data-insert="../">插入 ../</button><button data-insert="..%2f">插入 ..%2f</button><button data-insert="php://input">插入 php://input</button></div></details>
+  <details><summary>SSRF</summary><div class="dropdown"><button data-insert="http://127.0.0.1/">本机 URL 文本</button><button data-insert="https://example.com/">示例 URL 文本</button></div></details>
+  <details><summary>SSTI</summary><div class="dropdown"><button data-insert="{{7*7}}">{{7*7}}</button><button data-insert="${7*7}">${7*7}</button></div></details>
+  <details><summary>SHELL</summary><div class="dropdown"><button data-tool="shellquote">POSIX 单引号转义</button><button data-tool="psquote">PowerShell 单引号转义</button></div></details>
+  <details><summary>ENCODING</summary><div class="dropdown"><button data-tool="urlencode">URL 编码</button><button data-tool="urldecode">URL 解码</button><button data-tool="base64encode">Base64 编码 (UTF-8)</button><button data-tool="base64decode">Base64 解码 (UTF-8)</button><button data-tool="hexencode">Hex 编码 (UTF-8)</button><button data-tool="hexdecode">Hex 解码 (UTF-8)</button><button data-tool="rot13">ROT13</button></div></details>
+  <details><summary>HASHING</summary><div class="dropdown"><button data-tool="md5">MD5</button><button data-tool="sha1">SHA-1</button><button data-tool="sha256">SHA-256</button></div></details>
+  <details><summary>CUSTOM</summary><div class="dropdown"><button data-tool="json">JSON 格式化</button><button data-tool="upper">转大写</button><button data-tool="lower">转小写</button><button data-tool="strip">移除空白</button><button data-tool="slashes">添加反斜杠</button><button data-tool="unslashes">去除反斜杠</button><button data-insert="/">插入 /</button><button id="clear">清空编辑区</button></div></details>
+  <span class="menu-spacer"></span><details><summary>MODE</summary><div class="dropdown right"><button id="open-help">使用说明</button><button id="open-tab">在独立窗口打开面板</button></div></details><details><summary>THEME</summary><div class="dropdown right"><button data-theme="light">浅色</button><button data-theme="dark">深色</button></div></details>
+</nav>
+<main>
+  <div class="lab-title"><span class="brand">HACKBAR <span>360</span></span><span>REQUEST LAB <b>2.5.0</b></span><span id="context">DevTools 请求调试</span></div>
+  <section class="request-editor" aria-label="请求编辑器">
+    <label class="field-label" for="url">URL</label><textarea id="url" class="url" rows="2" placeholder="https://example.com/api/resource" spellcheck="false"></textarea>
+    <div class="request-grid">
+      <section aria-label="请求体">
+        <div class="body-options"><label class="post-switch"><input id="post" type="checkbox"><span></span>Use POST method</label><label>Method<select id="method" aria-label="HTTP 方法"><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option><option>HEAD</option><option>OPTIONS</option></select></label><label>enctype<select id="body-type"><option value="form">application/x-www-form-urlencoded</option><option value="json">application/json</option><option value="raw">raw / 自定义类型</option></select></label></div>
+        <label id="raw-type-label" class="field-label" hidden>Content-Type<input id="content-type" value="text/plain;charset=UTF-8"></label>
+        <label class="field-label" for="body">Body <span id="body-hint">GET / HEAD 不发送请求体</span></label><textarea id="body" rows="9" spellcheck="false" placeholder="key=value&key=another+value"></textarea>
+        <div class="request-settings"><label><input id="credentials" type="checkbox"> 携带浏览器凭据</label><label>超时 <input id="timeout" type="number" min="1" max="120" value="30"> 秒</label><button id="cancel" disabled>取消请求</button></div>
+        <p class="hint">Ctrl+Enter 发送 · 选中文字后使用工具菜单；未选中时处理整个输入框。</p>
+      </section>
+      <section class="headers-editor" aria-label="请求头">
+        <div class="headers-toolbar"><button id="add-header">＋ MODIFY HEADER</button><span>勾选启用 · 可编辑名称和值</span></div>
+        <div id="headers"></div>
+        <p class="hint">Host、Cookie、Referer、User-Agent 等由浏览器控制，不能手工发送。读取的受限头默认不勾选。</p>
+      </section>
+    </div>
+  </section>
+  <div class="statusbar" role="status" aria-live="polite"><span id="status">就绪</span><span id="response-meta"></span></div>
+  <nav class="tabs" aria-label="调试工作区"><button data-tab="response" class="active">响应</button><button data-tab="history">历史 <span id="history-count">0</span></button><button data-tab="compare">响应对比</button><button data-tab="notes">测试笔记</button><button data-tab="export">报告导出</button></nav>
+  <section id="pane-response" class="pane"><div class="toolbar"><label>显示<select id="response-view"><option value="pretty">JSON 格式化 / 文本</option><option value="raw">原始文本</option><option value="headers">响应头</option></select></label><label><input id="mask-view" type="checkbox" checked> 脱敏显示</label><button id="baseline">设为对比基线 A</button><button id="copy-response">复制当前视图</button><span id="response-warning"></span></div><pre id="response-output" tabindex="0">发送请求后在这里查看响应。响应中的 HTML / JavaScript 仅作为文本显示。</pre></section>
+  <section id="pane-history" class="pane" hidden><div class="toolbar"><input id="history-search" type="search" placeholder="搜索 URL / 方法 / 状态"><button id="refresh-history">刷新</button><button id="clear-history">清空历史</button><span>最近 50 条 · 本地保存且自动脱敏</span></div><div id="history-list"></div></section>
+  <section id="pane-compare" class="pane" hidden><div class="toolbar"><button id="compare-now">与当前响应 B 对比</button><button id="clear-baseline">清除基线</button><span>按行比较正文，同时比较状态与响应头；最多展示 200 处差异。</span></div><div id="compare-meta">先从响应或历史中设置基线 A。</div><div id="compare-output"></div></section>
+  <section id="pane-notes" class="pane" hidden><div class="toolbar"><span>测试范围、步骤、发现与修复建议</span><button id="save-notes">保存笔记</button><span id="notes-status"></span></div><textarea id="notes" rows="12" placeholder="目标 / 授权范围：&#10;复现步骤：&#10;观察结果：&#10;风险与修复建议："></textarea><p class="hint">笔记仅保存在本地，保存时自动脱敏；分享报告前仍需人工检查。</p></section>
+  <section id="pane-export" class="pane" hidden><h2>导出测试记录</h2><p>包含当前请求、响应、本地历史、已保存笔记和当前对比结果。导出始终执行自动脱敏。</p><div class="toolbar"><button data-export="html">HTML 报告</button><button data-export="md">Markdown 报告</button><button data-export="json">JSON 数据</button></div><p class="hint">自动识别认证头、Cookie、常见口令 / Token / API Key 字段、JWT、邮箱与中国大陆手机号。未知字段、编码或自由文本中的秘密可能无法识别，请在分享前复核。</p></section>
+</main>
+<dialog id="network-dialog"><h2>从 DevTools Network 读取</h2><p>只列出 DevTools 已捕获的 HTTP(S) 请求；选择后回填编辑器。</p><div id="network-list"></div><button id="close-network">关闭</button></dialog>
+<dialog id="copy-dialog"><h2>请手工复制</h2><textarea id="copy-text" rows="12"></textarea><button id="close-copy">关闭</button></dialog>
+<script src="js/Encrypt.js"></script><script src="js/core.js"></script><script src="js/utilities.js"></script><script src="js/panel.js"></script>
+</body></html>

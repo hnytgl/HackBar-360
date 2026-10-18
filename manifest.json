@@ -1,0 +1,14 @@
+{
+  "manifest_version": 2,
+  "name": "HackBar-360 · Request Lab",
+  "short_name": "HackBar",
+  "version": "2.5.0",
+  "description": "HackBar 请求调试、历史对比、测试笔记与脱敏报告。F12 → HackBar。",
+  "author": "HackBar contributors; 360 upgrade",
+  "icons": {"48": "icons/icon.png"},
+  "browser_action": {"default_title": "HackBar", "default_popup": "popup/popup.html", "default_icon": "icons/icon.png"},
+  "background": {"scripts": ["theme/js/core.js", "background.js"], "persistent": true},
+  "devtools_page": "theme/hackbar.html",
+  "permissions": ["storage", "tabs", "http://*/*", "https://*/*"],
+  "content_security_policy": "script-src 'self'; object-src 'none'"
+}

@@ -1,10 +1,10 @@
 # HackBar-360 · Request Lab
 
-面向 360 Chromium / 极速模式的 HackBar 扩展，提供手工 API 请求调试、历史记录、响应对比、测试笔记与脱敏报告。当前版本 **2.5.0**，沿用 **Manifest V2**。
+面向 360 Chromium / 极速模式的 HackBar 扩展，提供手工 API 请求调试、历史记录、响应对比、测试笔记与脱敏报告。当前版本 **2.5.1**，沿用 **Manifest V2**。
 
 ## 下载与安装
 
-前往 [v2.5.0 发布页](https://github.com/hnytgl/HackBar-360/releases/tag/v2.5.0)，下载 **HackBar-360-v2.5.0.zip** 并解压。
+下载 [main 分支源码 ZIP](https://github.com/hnytgl/HackBar-360/archive/refs/heads/main.zip) 并解压；选择直接包含 `manifest.json` 的仓库根目录加载。
 
 在 360 扩展管理页面开启开发者模式，加载解压后**直接包含 `manifest.json` 的文件夹**。本安装 ZIP 的清单位于根目录，没有额外嵌套。目标页面使用极速模式，按 **F12 → HackBar**；也可通过扩展图标打开独立调试窗口。
 
@@ -29,6 +29,14 @@
 - 本地脱敏历史：搜索、回填、删除、清空；响应基线和按行对比。
 - 测试笔记及 HTML / Markdown / JSON 脱敏报告导出。
 - 原 HackBar 编码、哈希、SQL 字符表达式、HTML / XSS 文本转换等工具，补充 UTF-8 和严格输入校验。
+
+## v2.5.1 更新（2026-10-18）
+
+- 恢复 LFI 原有 20 条手工模板，包括 `php://filter`、`zip://`、`data://`、`expect://` 和 `php://input`，采用分组菜单。
+- SSRF、SSTI、SHELL 增加手工测试片段，点击仅插入文字，不自动执行。
+- 修复 SPLIT 分行/合并切换，以及固定 SQLI/XSS 文本片段无选区时的插入行为。
+- 保留 v2.5.0 已实现的 API 调试、请求取消/超时、历史、对比与脱敏报告。
+- Manifest V2 兼容性取决于 360 浏览器内核版本；更新后请重新加载扩展。
 
 ## 兼容性与限制
 

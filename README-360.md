@@ -1,8 +1,8 @@
-# HackBar-360 2.5.0 · Request Lab
+# HackBar-360 2.5.1 · Request Lab
 
 ## 安装：解决“清单文件缺失或不可读取”
 
-1. 将 `HackBar-360-v2.5.0.zip` **解压到一个独立文件夹**，例如 `D:\hack\HackBar-360-v2.5.0`。
+1. 将 `HackBar-360-v2.5.1.zip` **解压到一个独立文件夹**，例如 `D:\hack\HackBar-360-v2.5.1`。
 2. 打开这个文件夹，应立即看到 `manifest.json`、`background.js`、`theme`、`popup`、`icons`、`help`。**manifest.json 在 ZIP 根目录，没有多套一层 HackBar 文件夹。**
 3. 在 360 浏览器的扩展管理页面开启开发者模式，选择“加载已解压的扩展程序”，选中 **包含 manifest.json 的文件夹**。
 4. 目标页面使用 Chromium / 极速模式，按 F12，选择 HackBar 标签；看不到时检查开发者工具的 `»` 折叠菜单。更新扩展后关闭并重新打开 F12。
@@ -55,3 +55,13 @@ SQL / 模板 / XSS 菜单是手工文本工具；并不判断目标是否存在�
 此次环境找回了原始上传的 `HackBar-360.zip` 和界面截图；旧会话的 `/mnt/data/hackbar_v250`、`/mnt/data/hackbar_work` 不可访问，未声称合并其中未找回的修改。以原包为基础重构请求层与面板；保留 `Encrypt.js` 中上游作者说明和 MD5 实现。
 
 随包的 VALIDATION.md 记录实际验证范围。未在 360 品牌浏览器或 IE 兼容内核中验证；没有打包签名 CRX，也不承诺浏览器商店发布兼容性。
+
+
+## v2.5.1 更新（2026-10-18）
+
+- 恢复 LFI 原有 20 条手工模板，包括 `php://filter`、`zip://`、`data://`、`expect://` 和 `php://input`，采用分组菜单。
+- SSRF、SSTI、SHELL 增加手工测试片段，点击仅插入文字，不自动执行。
+- 修复 SPLIT 分行/合并切换，以及固定 SQLI/XSS 文本片段无选区时的插入行为。
+- 保留 v2.5.0 已实现的 API 调试、请求取消/超时、历史、对比与脱敏报告。
+- Manifest V2 兼容性取决于 360 浏览器内核版本；更新后请重新加载扩展。
+

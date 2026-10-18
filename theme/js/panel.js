@@ -158,7 +158,7 @@ async function applyTool(action, literal) {
   if (target.disabled) throw new Error('当前输入框不可编辑，请选择要处理的文字');
   const before = target.value;
   let start = target.selectionStart || 0, end = target.selectionEnd || 0;
-  if (literal === undefined && start === end) { start = 0; end = before.length; }
+  if (literal === undefined && start === end && action !== 'sqlinfo' && action !== 'alert') { start = 0; end = before.length; }
   const result = literal === undefined ? await HBTools.transform(action, before.slice(start, end)) : literal;
   if (target.value !== before) throw new Error('文字已变化，请重新执行工具');
   target.value = before.slice(0, start) + result + before.slice(end); target.focus(); target.setSelectionRange(start, start + result.length);
@@ -170,7 +170,7 @@ async function saveNotes() {
 async function exportReport(format) {
   await saveNotes();
   await refreshHistory();
-  const data = {tool: 'HackBar-360 2.5.0', exportedAt: new Date().toISOString(), redaction: '自动脱敏，分享前需人工复核', current: state.current, history: state.history, notes: state.notes, comparison: state.comparison};
+  const data = {tool: 'HackBar-360 2.5.1', exportedAt: new Date().toISOString(), redaction: '自动脱敏，分享前需人工复核', current: state.current, history: state.history, notes: state.notes, comparison: state.comparison};
   const content = HB.report(data, format);
   const blob = new Blob([content], {type: format === 'html' ? 'text/html;charset=utf-8' : format === 'json' ? 'application/json;charset=utf-8' : 'text/markdown;charset=utf-8'});
   const href = URL.createObjectURL(blob), a = element('a'); a.href = href; a.download = 'HackBar-report-' + new Date().toISOString().replace(/[:.]/g, '-') + '.' + format; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(href), 30000); status('报告已导出（自动脱敏），请在分享前复核');
@@ -190,7 +190,7 @@ document.addEventListener('click', e => {
 document.querySelectorAll('details').forEach(detail => detail.addEventListener('toggle', () => { if (detail.open) document.querySelectorAll('details').forEach(d => { if (d !== detail) d.open = false; }); }));
 $('load').addEventListener('click', handle(loadURL)); $('execute').addEventListener('click', handle(execute));
 $('cancel').addEventListener('click', handle(() => message('request.cancel', {id: state.pending})));
-$('split').addEventListener('click', handle(() => { const t = state.focus || $('url'); t.value = t.value.replace(/\r?\n(?=[?&])/g, '').replace(/([?&])/g, '\n$1'); saveDraftSoon(); }));
+$('split').addEventListener('click', handle(() => { const t = state.focus || $('url'); if (/\r?\n/.test(t.value)) { t.value = t.value.replace(/\r?\n\s*/g, ''); status('已合并分行内容'); } else { t.value = t.value.replace(/([?&])/g, '\n$1'); status('已按参数分行'); } saveDraftSoon(); }));
 $('method').addEventListener('change', updateBody); $('body-type').addEventListener('change', updateBody);
 $('post').addEventListener('change', () => { $('method').value = $('post').checked ? 'POST' : 'GET'; updateBody(); saveDraftSoon(); });
 $('add-header').addEventListener('click', () => { headerRow({}); saveDraftSoon(); });
